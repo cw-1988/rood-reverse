@@ -960,17 +960,23 @@ int func_800B770C(u_char* arg0, short arg1)
     return 0;
 }
 
-int func_800B77DC(u_char* arg0, short arg1)
+int vs_battle_script_actorSfxPanVolumeControl(u_char* arg0, short arg1)
 {
     char sp10[4];
     int var_a0;
 
+    // Opcode 0x24. This writes a small per-actor state block that is later
+    // consumed by the actor SFX helper path (via func_800AD62C /
+    // vs_main_computeSfxPan / vs_main_playSfx), so the script-level behavior
+    // is best described as actor-local SFX pan/volume control rather than a
+    // model animation or render effect.
     sp10[0] = arg0[3];
     sp10[1] = arg0[4];
     sp10[2] = arg0[5];
     sp10[3] = arg0[6];
     var_a0 = func_800BFE50(vs_battle_getShort(arg0 + 1));
     if (var_a0 == 0x2001) {
+        // Special target meaning "apply/clear this state for every actor".
         var_a0 = -1;
     }
     func_8009F990(var_a0, sp10);
@@ -1966,8 +1972,10 @@ int func_800B9F90(u_char* arg0, short arg1)
 // https://decomp.me/scratch/kvMAx
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800B9FC0);
 
-int func_800BA0E4(u_char* arg0, short arg1)
+int vs_battle_script_enableRoomMechanismUpdates(u_char* arg0, short arg1)
 {
+    // Opcode 0x78. Enable/disable the automatic room mechanism update loop.
+    // The script operand is inverted here, so 1 disables and 0 enables it.
     func_80091314(arg0[1] ^ 1);
     return 0;
 }
@@ -1993,10 +2001,12 @@ int func_800BA108(u_char* arg0, short arg1)
     return 0;
 }
 
-int func_800BA194(u_char* arg0, short arg1)
+int vs_battle_script_roomMechanismControl(u_char* arg0, short arg1)
 {
     int temp_s0 = arg0[2];
 
+    // Opcode 0x79. Sub-op 0 triggers a room mechanism/event object by id,
+    // while sub-op 1 toggles that mechanism's enabled bit.
     switch (arg0[1]) {
     case 0:
         if ((D_800F4C2C == 2) && (func_80093764(temp_s0) != 0)) {
@@ -2174,7 +2184,7 @@ int vs_battle_script_clearMusicLoadSlot(u_char* arg0, short arg1)
     return vs_main_clearMusicLoadSlot(arg0[1]) == 1;
 }
 
-int vs_battle_script_loadSoundFile2(u_char* arg0, short arg1)
+int vs_battle_script_loadSoundFileById(u_char* arg0, short arg1)
 {
     vs_main_loadSoundFile(arg0[1]);
     return 0;

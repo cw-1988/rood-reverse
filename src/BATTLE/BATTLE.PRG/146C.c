@@ -3565,6 +3565,8 @@ void func_800738E4(void)
         return;
     }
 
+    // Clear actor-local SFX spatial overrides before restoring the normal
+    // battle room state.
     sp10[0] = 0;
     func_8009F990(-1, sp10);
 
