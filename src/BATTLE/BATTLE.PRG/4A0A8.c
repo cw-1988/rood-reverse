@@ -3030,10 +3030,11 @@ int func_800BD610(void)
 }
 
 // Shared E-range screen-effect helper. The matched consumer path in
-// func_800BDAB4 shows that this family stages tweens for scale, color, and
-// offset updates, while the same block also owns the two-parameter effect path
-// that eventually calls func_800F9BC0. Keep the opcode-level names
-// conservative until the nonmatching setup body is fully recovered.
+// func_800BDAB4 is enough to lock in E4 as the two-component scale tween and
+// E6 as the signed two-axis offset tween. The same block also owns E5 color
+// updates plus the separate two-parameter SCREFF2 path that eventually calls
+// func_800F9BC0, so keep the remaining opcode-level names conservative until
+// the nonmatching setup body is fully recovered.
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BD6C4);
 
 void func_800F9BC0(int, int);

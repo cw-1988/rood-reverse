@@ -6470,6 +6470,7 @@ void func_8007D360(void)
     D_800F1A28[0] = 0;
     D_800F1A28[1] = 0;
     D_800F1A28[2] = 0;
+    // Neutral shared screen-effect state: 1.0 scale, grey color, zero offset.
     D_800F1A30[0] = 0x1000;
     D_800F1A30[1] = 0x1000;
     D_800F1A30[2] = 0;
@@ -6514,13 +6515,18 @@ void func_8007DDAC(int arg0) { D_800F1A2C = arg0; }
 
 void func_8007DDB8(D_800F1A68_t* arg0)
 {
+    // Shared script/menu setter for the two screen-effect scale components.
     D_800F1A30[0] = arg0->unk0;
     D_800F1A30[1] = arg0->unk4;
 }
 
 void func_8007DDD4(P_CODE* arg0) { D_800F1A78 = *arg0; }
 
-void func_8007DDF8(D_800F1A68_t* arg0) { D_800F1A68 = *arg0; }
+void func_8007DDF8(D_800F1A68_t* arg0)
+{
+    // Shared script/menu setter for the signed screen-effect offset vector.
+    D_800F1A68 = *arg0;
+}
 
 void func_8007DE2C(int arg0) { D_800F1B9C = arg0; }
 
