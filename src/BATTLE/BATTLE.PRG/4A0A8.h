@@ -141,7 +141,7 @@ int func_800BC2E8(u_char*, short);
 int func_800BB33C(u_char*, short);
 int func_800BB35C(u_char*, short);
 int vs_battle_script_setScreenEffectEnabled(u_char*, short);
-int func_800BD444(u_char*, short);
+int vs_battle_script_setupAngleTween(u_char*, short);
 int func_800BB38C(u_char*, short);
 int func_800BB3BC(u_char*, short);
 int func_800BDC9C(u_char*, short);

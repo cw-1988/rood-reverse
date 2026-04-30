@@ -33,14 +33,14 @@ typedef struct {
 } D_800F4BA4_t2;
 
 typedef struct {
-    char unk0;
-    char unk1;
-    short unk2;
-    short unk4;
-    short unk6;
-    short unk8;
-    short unkA;
-} func_800BD57C_t;
+    char dirty;
+    char curve;
+    short currentValue;
+    short startValue;
+    short deltaValue;
+    short elapsed;
+    short duration;
+} vs_battle_angleTweenState;
 
 typedef struct {
     char unk0;
@@ -68,8 +68,8 @@ typedef struct {
 
 typedef struct {
     D_800F4BA4_t2 unk0[2];
-    func_800BD57C_t unk168;
-    func_800BD57C_t unk174;
+    vs_battle_angleTweenState cameraAngleTween;
+    vs_battle_angleTweenState screenEffectAngleTween;
     func_800BDF6C_unk180_t projectionDistance;
     func_800BDF6C_unk180_t nearClip;
     func_800BDF6C_unk180_t farClip;
@@ -156,27 +156,26 @@ typedef struct {
 
 typedef struct {
     char unk0;
-    char unk1;
-    short unk2;
-    short unk4;
-    short unk6;
+    char curve;
+    short current0;
+    short current1;
+    short current2;
     short unk8;
-    short unkA;
-    short unkC;
-    short unkE;
+    short start0;
+    short start1;
+    short start2;
     short unk10;
-    short unk12;
-    short unk14;
-    short unk16;
+    short delta0;
+    short delta1;
+    short delta2;
     short unk18;
-    short unk1A;
-    short unk1C;
-    short unk1E;
-} func_800BDBB4_t;
+    short elapsed;
+    short duration;
+} vs_battle_effectTweenState;
 
 typedef struct {
     int unk0;
-} func_800BDBB4_t2;
+} vs_battle_effectTweenScratch;
 
 typedef struct {
     char unk0;
@@ -193,9 +192,9 @@ void func_800BBE04(int arg0);
 void func_800BBE94(void);
 void func_800BCA8C(D_800F4BA4_t2*, D_800F4BA4_t2*);
 void func_800BC1CC(short, int);
-void func_800BD57C(func_800BD57C_t* arg0);
+void vs_battle_updateAngleTween(vs_battle_angleTweenState* arg0);
 int func_800BD610(void);
-int func_800BDBB4(func_800BDBB4_t* arg0);
+int vs_battle_updateEffectTween(vs_battle_effectTweenState* arg0);
 void func_800BDF6C(func_800BDF6C_unk180_t* arg0);
 void func_800BE180(void);
 void func_800BE36C(int, int);
@@ -2857,13 +2856,13 @@ void vs_battle_applyCameraState(void)
     }
     vs_battle_setCameraLookAt(&cameraLookAt);
     vs_battle_setCameraPosition(&cameraPos);
-    if (D_800F4BA4->unk168.unk0 != 0) {
-        func_8007AC94(D_800F4BA4->unk168.unk2);
-        D_800F4BA4->unk168.unk0 = 0;
+    if (D_800F4BA4->cameraAngleTween.dirty != 0) {
+        func_8007AC94(D_800F4BA4->cameraAngleTween.currentValue);
+        D_800F4BA4->cameraAngleTween.dirty = 0;
     }
-    if (D_800F4BA4->unk174.unk0 != 0) {
-        func_8007DDAC(D_800F4BA4->unk174.unk2);
-        D_800F4BA4->unk174.unk0 = 0;
+    if (D_800F4BA4->screenEffectAngleTween.dirty != 0) {
+        func_8007DDAC(D_800F4BA4->screenEffectAngleTween.currentValue);
+        D_800F4BA4->screenEffectAngleTween.dirty = 0;
     }
     if (D_800F4BA4->projectionDistance.unk0 != 0) {
         vs_battle_setProjectionDistance(D_800F4BA4->projectionDistance.unk2);
@@ -2918,8 +2917,8 @@ void func_800BC9E0(void)
     D_800F4BA4->unk0[0].unkA4.vz = D_800F4BA4->unk0[1].cameraPos.vz;
     func_800BCA8C(&D_800F4BA4->unk0[0], &D_800F4BA4->unk0[1]);
     func_800BCA8C(&D_800F4BA4->unk0[1], &D_800F4BA4->unk0[0]);
-    func_800BD57C(&D_800F4BA4->unk168);
-    func_800BD57C(&D_800F4BA4->unk174);
+    vs_battle_updateAngleTween(&D_800F4BA4->cameraAngleTween);
+    vs_battle_updateAngleTween(&D_800F4BA4->screenEffectAngleTween);
     func_800BDF6C(&D_800F4BA4->projectionDistance);
     func_800BDF6C(&D_800F4BA4->nearClip);
     func_800BDF6C(&D_800F4BA4->farClip);
@@ -2933,72 +2932,72 @@ INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BCFB4);
 // https://decomp.me/scratch/gzNKP
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BD2B8);
 
-int func_800BD444(u_char* arg0, short arg1)
+int vs_battle_script_setupAngleTween(u_char* arg0, short arg1)
 {
-    func_800BD57C_t* var_s0;
+    vs_battle_angleTweenState* tween;
 
     // Opcodes 0xE2 and 0xE3 share this angle-style tween setup. The consumer
     // side is now clear enough to separate the destinations:
-    // - 0xE2 feeds D_800F4BA4->unk168 and is later applied through
+    // - 0xE2 feeds D_800F4BA4->cameraAngleTween and is later applied through
     //   func_8007AC94, matching the local CameraRollTween interpretation.
-    // - 0xE3 feeds D_800F4BA4->unk174 and is later applied through
+    // - 0xE3 feeds D_800F4BA4->screenEffectAngleTween and is later applied through
     //   func_8007DDAC, matching the local ScreenEffectAngleTween
     //   interpretation.
     switch (arg0[0]) {
     case 0xE2:
-        var_s0 = &D_800F4BA4->unk168;
+        tween = &D_800F4BA4->cameraAngleTween;
         break;
     case 0xE3:
-        var_s0 = &D_800F4BA4->unk174;
+        tween = &D_800F4BA4->screenEffectAngleTween;
         break;
     }
 
-    var_s0->unkA = arg0[4];
+    tween->duration = arg0[4];
 
-    if (var_s0->unkA == 0) {
-        var_s0->unk2 = vs_battle_getShort(arg0 + 1);
-        var_s0->unk0 = 1;
+    if (tween->duration == 0) {
+        tween->currentValue = vs_battle_getShort(arg0 + 1);
+        tween->dirty = 1;
     } else {
-        var_s0->unk4 = var_s0->unk2;
-        var_s0->unk6 = vs_battle_getShort(arg0 + 1) - var_s0->unk2;
-        if (var_s0->unk6 < -(ONE / 2)) {
-            var_s0->unk6 += ONE;
-        } else if (var_s0->unk6 > (ONE / 2)) {
-            var_s0->unk6 -= ONE;
+        tween->startValue = tween->currentValue;
+        tween->deltaValue = vs_battle_getShort(arg0 + 1) - tween->currentValue;
+        if (tween->deltaValue < -(ONE / 2)) {
+            tween->deltaValue += ONE;
+        } else if (tween->deltaValue > (ONE / 2)) {
+            tween->deltaValue -= ONE;
         }
 
         switch (arg0[3] >> 4) {
         case 0:
-            if (var_s0->unk6 > 0) {
-                var_s0->unk6 -= ONE;
+            if (tween->deltaValue > 0) {
+                tween->deltaValue -= ONE;
             }
             break;
         case 2:
-            if (var_s0->unk6 < 0) {
-                var_s0->unk6 += ONE;
+            if (tween->deltaValue < 0) {
+                tween->deltaValue += ONE;
             }
             break;
         }
 
-        var_s0->unk1 = arg0[3] & 0xF;
-        var_s0->unk8 = 0;
+        tween->curve = arg0[3] & 0xF;
+        tween->elapsed = 0;
     }
     return 0;
 }
 
-void func_800BD57C(func_800BD57C_t* arg0)
+void vs_battle_updateAngleTween(vs_battle_angleTweenState* arg0)
 {
-    if (arg0->unkA > 0) {
-        arg0->unk8 += vs_gametime_tickspeed >> 1;
+    if (arg0->duration > 0) {
+        arg0->elapsed += vs_gametime_tickspeed >> 1;
 
-        arg0->unk2 = (arg0->unk4
-                      + ((arg0->unk6 * func_800BFEBC(arg0->unk1, arg0->unk8, arg0->unkA))
+        arg0->currentValue = (arg0->startValue
+                      + ((arg0->deltaValue * func_800BFEBC(arg0->curve, arg0->elapsed, arg0->duration))
                           >> 0xC));
 
-        if (arg0->unk8 >= arg0->unkA) {
-            arg0->unkA = 0;
+        if (arg0->elapsed >= arg0->duration) {
+            arg0->duration = 0;
         }
-        arg0->unk0 = 1;
+        arg0->dirty = 1;
     }
 }
 
@@ -3009,7 +3008,7 @@ int func_800BD610(void)
     if (D_800F4BA4->unk0[1].unk0 == 0xF) {
         temp_a2 = temp_a2 | 2;
     }
-    if (D_800F4BA4->unk168.unkA == 0) {
+    if (D_800F4BA4->cameraAngleTween.duration == 0) {
         temp_a2 |= 4;
     }
     if (D_800F4BA4->projectionDistance.unk9 == 0) {
@@ -3047,47 +3046,47 @@ void func_800BDAB4(void)
     // This is the matched apply side for the shared E-range effect tweens:
     // scale via func_8007DDB8, color via func_8007DDD4, offset via
     // func_8007DDF8, and the two-parameter SCREFF2 path via func_800F9BC0.
-    if (func_800BDBB4((func_800BDBB4_t*)&D_800F4BA4->unk1FC) != 0) {
+    if (vs_battle_updateEffectTween((vs_battle_effectTweenState*)&D_800F4BA4->unk1FC) != 0) {
         sp10.unk0 = D_800F4BA4->unk1FE;
         sp10.unk4 = D_800F4BA4->unk200;
         func_8007DDB8(&sp10);
     }
-    if (func_800BDBB4((func_800BDBB4_t*)&D_800F4BA4->unk202[0x1A]) != 0) {
+    if (vs_battle_updateEffectTween((vs_battle_effectTweenState*)&D_800F4BA4->unk202[0x1A]) != 0) {
         sp20.r0 = D_800F4BA4->unk21E;
         sp20.g0 = D_800F4BA4->unk220;
         sp20.b0 = D_800F4BA4->unk222;
         func_8007DDD4(&sp20);
     }
-    if (func_800BDBB4((func_800BDBB4_t*)&D_800F4BA4->unk224[0x18]) != 0) {
+    if (vs_battle_updateEffectTween((vs_battle_effectTweenState*)&D_800F4BA4->unk224[0x18]) != 0) {
         sp10.unk0 = D_800F4BA4->unk23E;
         sp10.unk4 = D_800F4BA4->unk240;
         func_8007DDF8(&sp10);
     }
-    if (func_800BDBB4((func_800BDBB4_t*)&D_800F4BA4->unk242[0x1A]) != 0) {
+    if (vs_battle_updateEffectTween((vs_battle_effectTweenState*)&D_800F4BA4->unk242[0x1A]) != 0) {
         func_800F9BC0(D_800F4BA4->unk25E, D_800F4BA4->unk260);
     }
 }
 
-int func_800BDBB4(func_800BDBB4_t* arg0)
+int vs_battle_updateEffectTween(vs_battle_effectTweenState* arg0)
 {
-    func_800BDBB4_t2* a0;
-    int v0;
+    vs_battle_effectTweenScratch* scratch;
+    int curveT;
 
-    if (arg0->unk1E == 0) {
+    if (arg0->duration == 0) {
         return 0;
     }
 
-    arg0->unk1C = arg0->unk1C + (vs_gametime_tickspeed >> 1);
+    arg0->elapsed = arg0->elapsed + (vs_gametime_tickspeed >> 1);
 
-    v0 = func_800BFEBC(arg0->unk1, arg0->unk1C, arg0->unk1E);
-    a0 = (func_800BDBB4_t2*)0x1F800088;
-    a0->unk0 = v0;
-    arg0->unk2 = (arg0->unkA + ((arg0->unk12 * a0->unk0) >> 0xC));
-    arg0->unk4 = (arg0->unkC + ((arg0->unk14 * a0->unk0) >> 0xC));
-    arg0->unk6 = (arg0->unkE + ((arg0->unk16 * a0->unk0) >> 0xC));
+    curveT = func_800BFEBC(arg0->curve, arg0->elapsed, arg0->duration);
+    scratch = (vs_battle_effectTweenScratch*)0x1F800088;
+    scratch->unk0 = curveT;
+    arg0->current0 = (arg0->start0 + ((arg0->delta0 * scratch->unk0) >> 0xC));
+    arg0->current1 = (arg0->start1 + ((arg0->delta1 * scratch->unk0) >> 0xC));
+    arg0->current2 = (arg0->start2 + ((arg0->delta2 * scratch->unk0) >> 0xC));
 
-    if (arg0->unk1C == arg0->unk1E) {
-        arg0->unk1E = 0;
+    if (arg0->elapsed == arg0->duration) {
+        arg0->duration = 0;
     }
     return 1;
 }
@@ -3115,9 +3114,9 @@ void func_800BDF6C(func_800BDF6C_unk180_t* arg0)
     }
 }
 
-int func_800BE01C(func_800BDF6C_t* arg0)
+int vs_battle_updateOscillationSlot(func_800BDF6C_t* arg0)
 {
-    int temp_s1 = arg0->unk4 << 0xC;
+    int phaseScale = arg0->unk4 << 0xC;
 
     // Local 0xEF work recovered this as one of the bounded oscillation slot
     // updaters. The slot produces a sine-driven signed offset over time rather
@@ -3146,7 +3145,7 @@ int func_800BE01C(func_800BDF6C_t* arg0)
         *(int*)0x1F800088 = rsin((arg0->unk8 << 0xA) / arg0->unk9);
         break;
     }
-    arg0->unk2 = (((rsin((temp_s1 * arg0->unk8) / arg0->unk9) * arg0->unk6) >> 0xC)
+    arg0->unk2 = (((rsin((phaseScale * arg0->unk8) / arg0->unk9) * arg0->unk6) >> 0xC)
                      * *(int*)0x1F800088)
               >> 0xC;
     if (arg0->unk8 == arg0->unk9) {
