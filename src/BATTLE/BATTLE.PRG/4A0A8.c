@@ -3092,9 +3092,14 @@ int vs_battle_updateEffectTween(vs_battle_effectTweenState* arg0)
     return 1;
 }
 
-// Another E-range effect helper. Current script findings tie this cluster to
-// the camera/effect block, but the exact opcode-to-submode mapping still needs
-// the nonmatching body before a hard rename is safe.
+// Another camera/effect helper cluster. Raw 0xEF handler recovery now shows
+// that this family is not a SCREFF2 path:
+// - a zero second data byte clears both local oscillation slots immediately
+// - a nonzero second data byte allocates or reuses one of two oscillation
+//   slots, storing phase rate, amplitude, a high-byte waveform selector, a low
+//   control byte, and duration for the camera-side updater
+// Keep the exact high-byte mode names conservative until more of the body is
+// matched, but the opcode-level subsystem is firmly camera oscillation control.
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BDC9C);
 
 void func_800BDF6C(func_800BDF6C_unk180_t* arg0)
@@ -3158,7 +3163,9 @@ int vs_battle_updateOscillationSlot(func_800BDF6C_t* arg0)
 // https://decomp.me/scratch/3pQUE
 // Current 0xEF evidence says this advances the paired oscillation slots and
 // rotates their outputs into camera-relative offsets that are added to
-// cameraLookAt and cameraPos in vs_battle_applyCameraState.
+// cameraLookAt and cameraPos in vs_battle_applyCameraState. The low control
+// byte is already clear enough to identify per-target routing plus packed
+// axis-multiplier bits.
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BE180);
 
 void func_800BE36C(int arg0, int arg1)
