@@ -101,8 +101,8 @@ typedef struct {
     short unk23E;
     short unk240;
     char unk242[0x1C];
-    short unk25E;
-    short unk260;
+    short screenEffectParam0;
+    short screenEffectParam1;
     char unk262[0x16];
     short unk278;
     short unk27A;
@@ -3034,12 +3034,10 @@ int func_800BD610(void)
 // Shared E-range screen-effect helper. The matched consumer path in
 // func_800BDAB4 is enough to lock in E4 as the two-component scale tween and
 // E6 as the signed two-axis offset tween. The same block also owns E5 color
-// updates plus the separate two-parameter SCREFF2 path that eventually calls
-// func_800F9BC0, so keep the remaining opcode-level names conservative until
-// the nonmatching setup body is fully recovered.
+// updates plus the separate two-parameter SCREFF2 path that eventually writes
+// the SCREFF2 param pair, so keep the remaining opcode-level names
+// conservative until the nonmatching setup body is fully recovered.
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BD6C4);
-
-void func_800F9BC0(int, int);
 
 void func_800BDAB4(void)
 {
@@ -3048,7 +3046,8 @@ void func_800BDAB4(void)
 
     // This is the matched apply side for the shared E-range effect tweens:
     // scale via func_8007DDB8, color via func_8007DDD4, offset via
-    // func_8007DDF8, and the two-parameter SCREFF2 path via func_800F9BC0.
+    // func_8007DDF8, and the two-parameter SCREFF2 path via
+    // vs_screff2_setParamPair.
     if (vs_battle_updateEffectTween((vs_battle_effectTweenState*)&D_800F4BA4->unk1FC) != 0) {
         sp10.unk0 = D_800F4BA4->unk1FE;
         sp10.unk4 = D_800F4BA4->unk200;
@@ -3066,7 +3065,7 @@ void func_800BDAB4(void)
         func_8007DDF8(&sp10);
     }
     if (vs_battle_updateEffectTween((vs_battle_effectTweenState*)&D_800F4BA4->unk242[0x1A]) != 0) {
-        func_800F9BC0(D_800F4BA4->unk25E, D_800F4BA4->unk260);
+        vs_screff2_setParamPair(D_800F4BA4->screenEffectParam0, D_800F4BA4->screenEffectParam1);
     }
 }
 

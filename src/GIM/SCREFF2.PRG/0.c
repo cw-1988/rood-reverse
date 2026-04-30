@@ -7,8 +7,8 @@ typedef struct {
     char unk0;
     char unk1;
     short unk2;
-    short unk4;
-    short unk6;
+    short param0;
+    short param1;
     int unk8;
 } D_800EB9B4_t;
 
@@ -34,10 +34,10 @@ void func_800F9800(int arg0)
 
 INCLUDE_ASM("build/src/GIM/SCREFF2.PRG/nonmatchings/0", func_800F986C);
 
-void func_800F9BC0(short arg0, short arg1)
+void vs_screff2_setParamPair(short param0, short param1)
 {
-    D_800EB9B4->unk4 = arg0;
-    D_800EB9B4->unk6 = arg1;
+    D_800EB9B4->param0 = param0;
+    D_800EB9B4->param1 = param1;
 }
 
 INCLUDE_ASM("build/src/GIM/SCREFF2.PRG/nonmatchings/0", func_800F9BD8);
