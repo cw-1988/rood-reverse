@@ -1982,6 +1982,11 @@ int vs_battle_script_enableRoomMechanismUpdates(u_char* arg0, short arg1)
 
 int func_800BA108(u_char* arg0, short arg1)
 {
+    // Opcode 0x7A. This is in the room-audio path: enabling it saves the
+    // current persistent ambient sound id and clears it, while disabling it
+    // restores that saved id. The final player-facing name is still best kept
+    // conservative until the AKAO-backed and fallback ambient paths are
+    // reconciled more cleanly.
     if (arg0[1] != 0) {
         if (D_800F4C08 != 0) {
             return 0;
@@ -2558,8 +2563,10 @@ int func_800BB41C(u_char* arg0, short arg1)
     return arg0[1] != (arg0[1] & func_800BD610());
 }
 
-int func_800BB450(u_char* arg0, short arg1)
+int vs_battle_script_setScreenEffectEnabled(u_char* arg0, short arg1)
 {
+    // Opcode 0xE1. This is the confirmed on/off gate for the shared
+    // screen-effect runtime that the nearby E-range setup/tween opcodes feed.
     func_8007DD50(arg0[1]);
     return 0;
 }
@@ -2832,6 +2839,9 @@ void vs_battle_applyCameraState(void)
         }
     }
     if (*(short*)&D_800F4BA4->unk1A4.unk0 != 0) {
+        // The 0xEF-local oscillation slots are evaluated separately and then
+        // rotated into camera-relative offsets here before being applied to
+        // both the look-at and camera-position vectors.
         _sVectorToFixedPointVector((VECTOR*)0x1F800098, (SVECTOR*)&D_800F4BA4->unk1BE);
         _sVectorToFixedPointVector((VECTOR*)0x1F8000A8, (SVECTOR*)&D_800F4BA4->unk1C6);
         vec = (SVECTOR*)0x1F800088;
@@ -2927,6 +2937,13 @@ int func_800BD444(u_char* arg0, short arg1)
 {
     func_800BD57C_t* var_s0;
 
+    // Opcodes 0xE2 and 0xE3 share this angle-style tween setup. The consumer
+    // side is now clear enough to separate the destinations:
+    // - 0xE2 feeds D_800F4BA4->unk168 and is later applied through
+    //   func_8007AC94, matching the local CameraRollTween interpretation.
+    // - 0xE3 feeds D_800F4BA4->unk174 and is later applied through
+    //   func_8007DDAC, matching the local ScreenEffectAngleTween
+    //   interpretation.
     switch (arg0[0]) {
     case 0xE2:
         var_s0 = &D_800F4BA4->unk168;
@@ -3013,6 +3030,11 @@ int func_800BD610(void)
     return temp_a2;
 }
 
+// Shared E-range screen-effect helper. The matched consumer path in
+// func_800BDAB4 shows that this family stages tweens for scale, color, and
+// offset updates, while the same block also owns the two-parameter effect path
+// that eventually calls func_800F9BC0. Keep the opcode-level names
+// conservative until the nonmatching setup body is fully recovered.
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BD6C4);
 
 void func_800F9BC0(int, int);
@@ -3022,6 +3044,9 @@ void func_800BDAB4(void)
     D_800F1A68_t sp10;
     P_CODE sp20;
 
+    // This is the matched apply side for the shared E-range effect tweens:
+    // scale via func_8007DDB8, color via func_8007DDD4, offset via
+    // func_8007DDF8, and the two-parameter SCREFF2 path via func_800F9BC0.
     if (func_800BDBB4((func_800BDBB4_t*)&D_800F4BA4->unk1FC) != 0) {
         sp10.unk0 = D_800F4BA4->unk1FE;
         sp10.unk4 = D_800F4BA4->unk200;
@@ -3067,6 +3092,9 @@ int func_800BDBB4(func_800BDBB4_t* arg0)
     return 1;
 }
 
+// Another E-range effect helper. Current script findings tie this cluster to
+// the camera/effect block, but the exact opcode-to-submode mapping still needs
+// the nonmatching body before a hard rename is safe.
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BDC9C);
 
 void func_800BDF6C(func_800BDF6C_unk180_t* arg0)
@@ -3091,6 +3119,9 @@ int func_800BE01C(func_800BDF6C_t* arg0)
 {
     int temp_s1 = arg0->unk4 << 0xC;
 
+    // Local 0xEF work recovered this as one of the bounded oscillation slot
+    // updaters. The slot produces a sine-driven signed offset over time rather
+    // than a direct one-shot parameter write.
     if (arg0->unk9 == 0) {
         return 0;
     }
@@ -3125,6 +3156,9 @@ int func_800BE01C(func_800BDF6C_t* arg0)
 }
 
 // https://decomp.me/scratch/3pQUE
+// Current 0xEF evidence says this advances the paired oscillation slots and
+// rotates their outputs into camera-relative offsets that are added to
+// cameraLookAt and cameraPos in vs_battle_applyCameraState.
 INCLUDE_ASM("build/src/BATTLE/BATTLE.PRG/nonmatchings/4A0A8", func_800BE180);
 
 void func_800BE36C(int arg0, int arg1)
