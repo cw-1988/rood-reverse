@@ -8,18 +8,20 @@ comments, but does not rename symbols or change behavior.
 
 ## Comment-Level Conclusions
 
+- `0xE3` is the shared screen-effect angle tween.
 - `0xE4` is the shared two-component screen-effect scale tween.
 - `0xE6` is the shared signed two-axis screen-effect offset tween.
 
 ## Code Alignment
 
 - [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) now says the
-  matched consumer path in `func_800BDAB4` is strong enough to lock in `E4` as
-  the scale tween and `E6` as the offset tween, while keeping the remaining
-  nearby opcodes conservative.
+  shared `0xE2`/`0xE3` angle helper splits cleanly between camera roll and the
+  screen-effect angle destination, and that fresh MAP script samples are strong
+  enough to confirm `0xE3` as the screen-effect angle tween.
 - [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) now labels the
-  reset state as neutral shared screen-effect state, which matches the scale
-  and offset interpretation used by the helper comment.
+  `func_8007DDAC` target as the persistent screen-effect angle scalar, alongside
+  the already documented neutral shared screen-effect state used by the scale
+  and offset paths.
 - The same file now documents `func_8007DDB8` as the shared script/menu setter
   for the two scale components.
 - The same file now documents `func_8007DDF8` as the shared script/menu setter
@@ -28,18 +30,27 @@ comments, but does not rename symbols or change behavior.
 ## Evidence Summary
 
 - The matched dispatch path in
-  [`src/BATTLE/INITBTL.PRG/12AC.c`](src/BATTLE/INITBTL.PRG/12AC.c) places `E4`
-  and `E6` inside the shared E-range screen-effect helper family.
-- The matched apply side in
-  [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) is enough to
-  distinguish the scale setter path from the offset setter path.
+  [`src/BATTLE/INITBTL.PRG/12AC.c`](src/BATTLE/INITBTL.PRG/12AC.c) places `E3`,
+  `E4`, and `E6` inside the shared screen-effect helper family.
+- The matched angle helper in
+  [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) separates
+  `E2` and `E3` by destination and applies the `E3` result through
+  `func_8007DDAC`.
+- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) shows
+  `func_8007DDAC` writing one persistent shared scalar, just as
+  `func_8007DDB8` and `func_8007DDF8` write the persistent scale and offset
+  state.
 - [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) provides the
-  concrete shared state touched by those setter paths: neutral `0x1000`,
-  `0x1000` scale values for `E4`, and a signed offset vector for `E6`.
+  concrete shared state touched by those setter paths: a persistent angle
+  scalar for `E3`, neutral `0x1000`, `0x1000` scale values for `E4`, and a
+  signed offset vector for `E6`.
+- Fresh local script decoding adds the script-side confirmation for `E3`: the
+  current MAP corpus only uses it inside effect setup clusters, and `MAP102`
+  stages angle `48` before tweening back to `0` over 50 ticks.
 
 ## Scope Guard
 
 This note is intentionally narrower than a full opcode writeup. It only records
-the conclusions that the staged comment changes are asserting in code. The rest
-of the E-range helper family should stay conservative until its setup or
-consumer paths are equally clear.
+the conclusions that the local code comments now assert with evidence in hand.
+The rest of the E-range helper family should stay conservative until its setup
+or consumer paths are equally clear.

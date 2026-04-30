@@ -6511,7 +6511,11 @@ void func_8007DD50(int arg0)
     }
 }
 
-void func_8007DDAC(int arg0) { D_800F1A2C = arg0; }
+void func_8007DDAC(int arg0)
+{
+    // Shared script/menu setter for the persistent screen-effect angle scalar.
+    D_800F1A2C = arg0;
+}
 
 void func_8007DDB8(D_800F1A68_t* arg0)
 {

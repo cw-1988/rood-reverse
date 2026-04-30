@@ -2938,9 +2938,11 @@ int vs_battle_script_setupAngleTween(u_char* arg0, short arg1)
     // side is now clear enough to separate the destinations:
     // - 0xE2 feeds D_800F4BA4->cameraAngleTween and is later applied through
     //   func_8007AC94, matching the local CameraRollTween interpretation.
-    // - 0xE3 feeds D_800F4BA4->screenEffectAngleTween and is later applied through
-    //   func_8007DDAC, matching the local ScreenEffectAngleTween
-    //   interpretation.
+    // - 0xE3 feeds D_800F4BA4->screenEffectAngleTween and is later applied
+    //   through func_8007DDAC. Fresh MAP script samples keep it inside the
+    //   same E1/E4/E5/E6 effect block and include a direct 48 -> 0 tween in
+    //   MAP102, which is strong enough to confirm the local
+    //   ScreenEffectAngleTween interpretation.
     switch (arg0[0]) {
     case 0xE2:
         tween = &D_800F4BA4->cameraAngleTween;
