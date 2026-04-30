@@ -100,7 +100,7 @@ int func_800B9F90(u_char*, short);
 int func_800B9FC0(u_char*, short);
 int vs_battle_script_enableRoomMechanismUpdates(u_char*, short);
 int vs_battle_script_roomMechanismControl(u_char*, short);
-int func_800BA108(u_char*, short);
+int vs_battle_script_setRoomAmbientSoundSuspended(u_char*, short);
 int func_800BA218(u_char*, short);
 int func_800BA264(u_char*, short);
 int func_800BA288(u_char*, short);
