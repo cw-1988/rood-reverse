@@ -1509,16 +1509,22 @@ int vs_battle_script_jumpFwdIfFlagContext(u_char* arg0, short arg1)
 
 int func_800B8C44(u_char* arg0, short arg1) { return D_800F4C64; }
 
-int func_800B8C54(u_char* arg0, short arg1)
+int vs_battle_script_setJumpBackCounter(u_char* arg0, short arg1)
 {
+    // Opcode 0x49. Prime one of the local jump-back counter slots. The
+    // reserved 0xFF selector leaves the slots untouched so 0x4A can use its
+    // unconditional backward-jump form instead.
     if (arg0[1] != 0xFF) {
         D_800F4C10[arg0[1]] = arg0[2];
     }
     return 0;
 }
 
-int vs_battle_script_jumpBackIf(u_char* arg0, short arg1)
+int vs_battle_script_jumpBackIfCounter(u_char* arg0, short arg1)
 {
+    // Opcode 0x4A. Jump backward unconditionally on slot 0xFF, otherwise
+    // pre-decrement the selected counter slot and keep jumping while it
+    // remains nonzero.
     if (arg0[1] == 0xFF) {
         return (long)&arg0[-vs_battle_getShort(arg0 + 2)];
     }
