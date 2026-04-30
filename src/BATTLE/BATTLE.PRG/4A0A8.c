@@ -1981,9 +1981,11 @@ int vs_battle_script_enableRoomMechanismUpdates(u_char* arg0, short arg1)
 
 int vs_battle_script_setRoomAmbientSoundSuspended(u_char* arg0, short arg1)
 {
-    // Opcode 0x7A. This is in the room-audio path: suspending it saves the
-    // current persistent ambient sound id and clears it, while clearing the
-    // suspended state restores that saved id.
+    // Opcode 0x7A. On the currently proven persistent ambient-id path,
+    // suspending saves the current ambient sound id and clears it, while
+    // clearing the suspended state restores that saved id. The swap/restore
+    // work is gated below through func_8008E470(), so this comment should stay
+    // narrower than a blanket claim about every room-audio path.
     if (arg0[1] != 0) {
         if (D_800F4C08 != 0) {
             return 0;
