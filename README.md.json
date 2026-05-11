@@ -1,0 +1,696 @@
+{
+  "content": {
+    "raw_markdown": "# Rood Reverse\n\nA decompilation project for Vagrant Story for PlayStation 1, with a goal of enabling interoperability with modern hardware and fixing bugs in the original game.\n\nThis project does not contain any of the original files from the game disk, you must own a copy of the game.\n\nMany thanks to the [Chrono Cross Decompilation](https://github.com/jdperos/chrono-cross-decomp) for much of the sound library code.\n\nHeavily inspired by and indebted to the incredible work of the [sotn-decomp](https://github.com/Xeeynamo/sotn-decomp) team and the [PS1/PS2 decompilation](https://discord.gg/hKx3FJJgrV) Discord server.\n\nGrateful to the authors of Data Crystal’s [Vagrant Story](https://datacrystal.tcrf.net/wiki/Vagrant_Story) page for their excellent work and insights.\n\nThanks also to the following amazing projects (and their dependencies):\n- [splat](https://github.com/ethteck/splat)\n- [maspsx](https://github.com/mkst/maspsx)\n- [decomp.me](https://github.com/decompme/decomp.me)\n- [Decomp permuter](https://github.com/simonlindholm/decomp-permuter)\n- [Old GCC](https://github.com/decompals/old-gcc)\n- [mkpsxiso](https://github.com/Lameguy64/mkpsxiso)\n- [objdiff](https://github.com/encounter/objdiff)\n- [decomp.dev](https://decomp.dev/)\n\n## Status\n\n![Overall progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&label=Overall+progress)\n\n### Core libraries\n![SLUS_010.40 progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=lib.SLUS_010.40)\n\n### Main game engine\n![BATTLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.BATTLE.PRG)\n![INITBTL.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.INITBTL.PRG&color=%2332a934)\n\n### Menus\n![Total menu progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus)\n\n\n![MAINMENU.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MAINMENU.PRG&color=%2332a934)\n![MENU0.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU0.PRG&color=%2332a934)\n![MENU1.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU1.PRG&color=%2332a934)\n![MENU2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU2.PRG&color=%2332a934)\n![MENU3.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU3.PRG&color=%2332a934)\n![MENU4.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU4.PRG&color=%2332a934)\n![MENU5.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU5.PRG&color=%2332a934)\n![MENU7.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU7.PRG&color=%2332a934)\n![MENU8.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU8.PRG&color=%2332a934)\n![MENU9.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU9.PRG)\n![MENUB.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUB.PRG&color=%2332a934)\n![MENUC.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUC.PRG&color=%2332a934)\n![MENUD.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUD.PRG&color=%2332a934)\n![MENUE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUE.PRG&color=%2332a934)\n![MENUF.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUF.PRG)\n\n### Title and Ending Sequence\n![TITLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=title.TITLE.PRG)\n![ENDING.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.ENDING.PRG)\n![SCREFF2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.SCREFF2.PRG)\n\n### Editable content\nThe following files can be freely edited*, either as source code or by editing the dumped .yaml or .obj formats\n```\ndata/BATTLE/\n    INITBTL.PRG\n\ndata/MENU/\n    ARMOR.SYD\n    BLADE.SYD\n    SHIELD.SYD\n    ITEMNAME.BIN\n    ITEMHELP.BIN\n    MAPBG.BIN\n    MCMAN.BIN\n    MAINMENU.PRG\n    MENU0.PRG\n    MENU1.PRG\n    MENU2.PRG\n    MENU3.PRG\n    MENU4.PRG\n    MENU5.PRG\n    MENU7.PRG\n    MENU8.PRG\n    MENUB.PRG\n    MENUC.PRG\n    MENUD.PRG\n    MENUE.PRG\n    MENU12.BIN\n    SPMCIMG.BIN\n\ndata/SMALL/\n    HELP01.HF0 - HELP14.HF0\n    HELP01.HF1 - HELP14.HF1\n    DUMMY.ARM\n    SCEN001.ARM - SCEN031.ARM\n\ndata/TITLE/\n    TITLE.PRG\n```\n(*n.b. until all of the loading code has been decompiled, if a file's sector size changes on disk then bad things will ensue)\n\n## (Naive) Quickstart\n1. Fork the project\n2. Install system dependencies and copy disk image (see \"Setup\" below)\n3. Run `make -j` to perform an initial split & build\n4. Pick a function to decompile, use `make decompme` to create a scratch on decomp.me\n5. Claim and decompile the scratch\n6. Copy the decompiled code where it belongs \n7. Optionally use `make permute` if needed\n8. Run `make remake -j`, and finally `make format` if the code compiles successfully\n9. Open a PR\n\n## Setup\nThe project is mostly self-configuring but requires a minimal amount of setup.\n- Make sure the following packages are installed, older versions may also work but this is not tested. This configuration works as-is on Ubuntu 24.04 on WSL; depending on your distro you may need additional packages.\n\n| Package                 | Minimum Version |\n|-------------------------|----------------|\n| clang-format            | 18.1.3         |\n| cmake                   | 3.28.3         |\n| docker-buildx           | 29.1.3         |\n| g++                     | 13.3.0         |\n| gcc-mipsel-linux-gnu    | 12.4.0         |\n| make                    | 4.3            |\n| python3                 | 3.12.3         |\n| python3-venv            | 3.12.3         |\n| rustup                  | 1.26.0         |\n- If you do not use your own docker configuration, set docker permissions with `sudo usermod -aG docker $USER`, then log out and back in again\n- Run `rustup default stable` if you do not already have a local rust environment set up\n- Dump your original disk to `disks/SLUS-01040.bin`\n- Run `make -j` to finish installation and perform an initial build\n\n## Build targets\n- `make -j` should be all that is needed most of the time. The first execution will configure the remaining dependencies in the `tools` directory and extract the files from the disk; from then on it will perform a minimal rebuild. \n- `make decompme TARGET=path/to/nonmatchings/source.s` uploads the target function to a new decomp.me scratch.\n- `make permute TARGET=path/to/nonmatchings/source.s` invokes the permuter for the target assembly file. \n- `make remake -j` will delete and re-split the targets; this can be necessary if the dependency management has failed to identify everything that needs rebuilding (in which case a bug report is appreciated!), or if the configuration has changed enough to be no longer valid (e.g. orphaned .d files). It's good practice to run this before submitting a pull request to make sure everything still works.\n- `make format` formats the source files and symbol addresses for consistency. Please run this before submitting a PR.\n- `make clean` simply deletes the `build` and `nonmatchings` directories\n- `make clean-all` will completely reset the project, including dropping any source changes and data files (but not the disk image). Use with caution.\n",
+    "markdown_with_json_links": "# Rood Reverse\n\nA decompilation project for Vagrant Story for PlayStation 1, with a goal of enabling interoperability with modern hardware and fixing bugs in the original game.\n\nThis project does not contain any of the original files from the game disk, you must own a copy of the game.\n\nMany thanks to the [Chrono Cross Decompilation](https://github.com/jdperos/chrono-cross-decomp) for much of the sound library code.\n\nHeavily inspired by and indebted to the incredible work of the [sotn-decomp](https://github.com/Xeeynamo/sotn-decomp) team and the [PS1/PS2 decompilation](https://discord.gg/hKx3FJJgrV) Discord server.\n\nGrateful to the authors of Data Crystal’s [Vagrant Story](https://datacrystal.tcrf.net/wiki/Vagrant_Story) page for their excellent work and insights.\n\nThanks also to the following amazing projects (and their dependencies):\n- [splat](https://github.com/ethteck/splat)\n- [maspsx](https://github.com/mkst/maspsx)\n- [decomp.me](https://github.com/decompme/decomp.me)\n- [Decomp permuter](https://github.com/simonlindholm/decomp-permuter)\n- [Old GCC](https://github.com/decompals/old-gcc)\n- [mkpsxiso](https://github.com/Lameguy64/mkpsxiso)\n- [objdiff](https://github.com/encounter/objdiff)\n- [decomp.dev](https://decomp.dev/)\n\n## Status\n\n![Overall progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&label=Overall+progress)\n\n### Core libraries\n![SLUS_010.40 progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=lib.SLUS_010.40)\n\n### Main game engine\n![BATTLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.BATTLE.PRG)\n![INITBTL.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.INITBTL.PRG&color=%2332a934)\n\n### Menus\n![Total menu progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus)\n\n\n![MAINMENU.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MAINMENU.PRG&color=%2332a934)\n![MENU0.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU0.PRG&color=%2332a934)\n![MENU1.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU1.PRG&color=%2332a934)\n![MENU2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU2.PRG&color=%2332a934)\n![MENU3.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU3.PRG&color=%2332a934)\n![MENU4.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU4.PRG&color=%2332a934)\n![MENU5.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU5.PRG&color=%2332a934)\n![MENU7.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU7.PRG&color=%2332a934)\n![MENU8.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU8.PRG&color=%2332a934)\n![MENU9.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU9.PRG)\n![MENUB.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUB.PRG&color=%2332a934)\n![MENUC.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUC.PRG&color=%2332a934)\n![MENUD.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUD.PRG&color=%2332a934)\n![MENUE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUE.PRG&color=%2332a934)\n![MENUF.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUF.PRG)\n\n### Title and Ending Sequence\n![TITLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=title.TITLE.PRG)\n![ENDING.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.ENDING.PRG)\n![SCREFF2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.SCREFF2.PRG)\n\n### Editable content\nThe following files can be freely edited*, either as source code or by editing the dumped .yaml or .obj formats\n```\ndata/BATTLE/\n    INITBTL.PRG\n\ndata/MENU/\n    ARMOR.SYD\n    BLADE.SYD\n    SHIELD.SYD\n    ITEMNAME.BIN\n    ITEMHELP.BIN\n    MAPBG.BIN\n    MCMAN.BIN\n    MAINMENU.PRG\n    MENU0.PRG\n    MENU1.PRG\n    MENU2.PRG\n    MENU3.PRG\n    MENU4.PRG\n    MENU5.PRG\n    MENU7.PRG\n    MENU8.PRG\n    MENUB.PRG\n    MENUC.PRG\n    MENUD.PRG\n    MENUE.PRG\n    MENU12.BIN\n    SPMCIMG.BIN\n\ndata/SMALL/\n    HELP01.HF0 - HELP14.HF0\n    HELP01.HF1 - HELP14.HF1\n    DUMMY.ARM\n    SCEN001.ARM - SCEN031.ARM\n\ndata/TITLE/\n    TITLE.PRG\n```\n(*n.b. until all of the loading code has been decompiled, if a file's sector size changes on disk then bad things will ensue)\n\n## (Naive) Quickstart\n1. Fork the project\n2. Install system dependencies and copy disk image (see \"Setup\" below)\n3. Run `make -j` to perform an initial split & build\n4. Pick a function to decompile, use `make decompme` to create a scratch on decomp.me\n5. Claim and decompile the scratch\n6. Copy the decompiled code where it belongs \n7. Optionally use `make permute` if needed\n8. Run `make remake -j`, and finally `make format` if the code compiles successfully\n9. Open a PR\n\n## Setup\nThe project is mostly self-configuring but requires a minimal amount of setup.\n- Make sure the following packages are installed, older versions may also work but this is not tested. This configuration works as-is on Ubuntu 24.04 on WSL; depending on your distro you may need additional packages.\n\n| Package                 | Minimum Version |\n|-------------------------|----------------|\n| clang-format            | 18.1.3         |\n| cmake                   | 3.28.3         |\n| docker-buildx           | 29.1.3         |\n| g++                     | 13.3.0         |\n| gcc-mipsel-linux-gnu    | 12.4.0         |\n| make                    | 4.3            |\n| python3                 | 3.12.3         |\n| python3-venv            | 3.12.3         |\n| rustup                  | 1.26.0         |\n- If you do not use your own docker configuration, set docker permissions with `sudo usermod -aG docker $USER`, then log out and back in again\n- Run `rustup default stable` if you do not already have a local rust environment set up\n- Dump your original disk to `disks/SLUS-01040.bin`\n- Run `make -j` to finish installation and perform an initial build\n\n## Build targets\n- `make -j` should be all that is needed most of the time. The first execution will configure the remaining dependencies in the `tools` directory and extract the files from the disk; from then on it will perform a minimal rebuild. \n- `make decompme TARGET=path/to/nonmatchings/source.s` uploads the target function to a new decomp.me scratch.\n- `make permute TARGET=path/to/nonmatchings/source.s` invokes the permuter for the target assembly file. \n- `make remake -j` will delete and re-split the targets; this can be necessary if the dependency management has failed to identify everything that needs rebuilding (in which case a bug report is appreciated!), or if the configuration has changed enough to be no longer valid (e.g. orphaned .d files). It's good practice to run this before submitting a pull request to make sure everything still works.\n- `make format` formats the source files and symbol addresses for consistency. Please run this before submitting a PR.\n- `make clean` simply deletes the `build` and `nonmatchings` directories\n- `make clean-all` will completely reset the project, including dropping any source changes and data files (but not the disk image). Use with caution.\n",
+    "lines": [
+      "# Rood Reverse",
+      "",
+      "A decompilation project for Vagrant Story for PlayStation 1, with a goal of enabling interoperability with modern hardware and fixing bugs in the original game.",
+      "",
+      "This project does not contain any of the original files from the game disk, you must own a copy of the game.",
+      "",
+      "Many thanks to the [Chrono Cross Decompilation](https://github.com/jdperos/chrono-cross-decomp) for much of the sound library code.",
+      "",
+      "Heavily inspired by and indebted to the incredible work of the [sotn-decomp](https://github.com/Xeeynamo/sotn-decomp) team and the [PS1/PS2 decompilation](https://discord.gg/hKx3FJJgrV) Discord server.",
+      "",
+      "Grateful to the authors of Data Crystal’s [Vagrant Story](https://datacrystal.tcrf.net/wiki/Vagrant_Story) page for their excellent work and insights.",
+      "",
+      "Thanks also to the following amazing projects (and their dependencies):",
+      "- [splat](https://github.com/ethteck/splat)",
+      "- [maspsx](https://github.com/mkst/maspsx)",
+      "- [decomp.me](https://github.com/decompme/decomp.me)",
+      "- [Decomp permuter](https://github.com/simonlindholm/decomp-permuter)",
+      "- [Old GCC](https://github.com/decompals/old-gcc)",
+      "- [mkpsxiso](https://github.com/Lameguy64/mkpsxiso)",
+      "- [objdiff](https://github.com/encounter/objdiff)",
+      "- [decomp.dev](https://decomp.dev/)",
+      "",
+      "## Status",
+      "",
+      "![Overall progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&label=Overall+progress)",
+      "",
+      "### Core libraries",
+      "![SLUS_010.40 progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=lib.SLUS_010.40)",
+      "",
+      "### Main game engine",
+      "![BATTLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.BATTLE.PRG)",
+      "![INITBTL.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.INITBTL.PRG&color=%2332a934)",
+      "",
+      "### Menus",
+      "![Total menu progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus)",
+      "",
+      "",
+      "![MAINMENU.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MAINMENU.PRG&color=%2332a934)",
+      "![MENU0.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU0.PRG&color=%2332a934)",
+      "![MENU1.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU1.PRG&color=%2332a934)",
+      "![MENU2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU2.PRG&color=%2332a934)",
+      "![MENU3.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU3.PRG&color=%2332a934)",
+      "![MENU4.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU4.PRG&color=%2332a934)",
+      "![MENU5.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU5.PRG&color=%2332a934)",
+      "![MENU7.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU7.PRG&color=%2332a934)",
+      "![MENU8.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU8.PRG&color=%2332a934)",
+      "![MENU9.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU9.PRG)",
+      "![MENUB.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUB.PRG&color=%2332a934)",
+      "![MENUC.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUC.PRG&color=%2332a934)",
+      "![MENUD.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUD.PRG&color=%2332a934)",
+      "![MENUE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUE.PRG&color=%2332a934)",
+      "![MENUF.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUF.PRG)",
+      "",
+      "### Title and Ending Sequence",
+      "![TITLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=title.TITLE.PRG)",
+      "![ENDING.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.ENDING.PRG)",
+      "![SCREFF2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.SCREFF2.PRG)",
+      "",
+      "### Editable content",
+      "The following files can be freely edited*, either as source code or by editing the dumped .yaml or .obj formats",
+      "```",
+      "data/BATTLE/",
+      "    INITBTL.PRG",
+      "",
+      "data/MENU/",
+      "    ARMOR.SYD",
+      "    BLADE.SYD",
+      "    SHIELD.SYD",
+      "    ITEMNAME.BIN",
+      "    ITEMHELP.BIN",
+      "    MAPBG.BIN",
+      "    MCMAN.BIN",
+      "    MAINMENU.PRG",
+      "    MENU0.PRG",
+      "    MENU1.PRG",
+      "    MENU2.PRG",
+      "    MENU3.PRG",
+      "    MENU4.PRG",
+      "    MENU5.PRG",
+      "    MENU7.PRG",
+      "    MENU8.PRG",
+      "    MENUB.PRG",
+      "    MENUC.PRG",
+      "    MENUD.PRG",
+      "    MENUE.PRG",
+      "    MENU12.BIN",
+      "    SPMCIMG.BIN",
+      "",
+      "data/SMALL/",
+      "    HELP01.HF0 - HELP14.HF0",
+      "    HELP01.HF1 - HELP14.HF1",
+      "    DUMMY.ARM",
+      "    SCEN001.ARM - SCEN031.ARM",
+      "",
+      "data/TITLE/",
+      "    TITLE.PRG",
+      "```",
+      "(*n.b. until all of the loading code has been decompiled, if a file's sector size changes on disk then bad things will ensue)",
+      "",
+      "## (Naive) Quickstart",
+      "1. Fork the project",
+      "2. Install system dependencies and copy disk image (see \"Setup\" below)",
+      "3. Run `make -j` to perform an initial split & build",
+      "4. Pick a function to decompile, use `make decompme` to create a scratch on decomp.me",
+      "5. Claim and decompile the scratch",
+      "6. Copy the decompiled code where it belongs ",
+      "7. Optionally use `make permute` if needed",
+      "8. Run `make remake -j`, and finally `make format` if the code compiles successfully",
+      "9. Open a PR",
+      "",
+      "## Setup",
+      "The project is mostly self-configuring but requires a minimal amount of setup.",
+      "- Make sure the following packages are installed, older versions may also work but this is not tested. This configuration works as-is on Ubuntu 24.04 on WSL; depending on your distro you may need additional packages.",
+      "",
+      "| Package                 | Minimum Version |",
+      "|-------------------------|----------------|",
+      "| clang-format            | 18.1.3         |",
+      "| cmake                   | 3.28.3         |",
+      "| docker-buildx           | 29.1.3         |",
+      "| g++                     | 13.3.0         |",
+      "| gcc-mipsel-linux-gnu    | 12.4.0         |",
+      "| make                    | 4.3            |",
+      "| python3                 | 3.12.3         |",
+      "| python3-venv            | 3.12.3         |",
+      "| rustup                  | 1.26.0         |",
+      "- If you do not use your own docker configuration, set docker permissions with `sudo usermod -aG docker $USER`, then log out and back in again",
+      "- Run `rustup default stable` if you do not already have a local rust environment set up",
+      "- Dump your original disk to `disks/SLUS-01040.bin`",
+      "- Run `make -j` to finish installation and perform an initial build",
+      "",
+      "## Build targets",
+      "- `make -j` should be all that is needed most of the time. The first execution will configure the remaining dependencies in the `tools` directory and extract the files from the disk; from then on it will perform a minimal rebuild. ",
+      "- `make decompme TARGET=path/to/nonmatchings/source.s` uploads the target function to a new decomp.me scratch.",
+      "- `make permute TARGET=path/to/nonmatchings/source.s` invokes the permuter for the target assembly file. ",
+      "- `make remake -j` will delete and re-split the targets; this can be necessary if the dependency management has failed to identify everything that needs rebuilding (in which case a bug report is appreciated!), or if the configuration has changed enough to be no longer valid (e.g. orphaned .d files). It's good practice to run this before submitting a pull request to make sure everything still works.",
+      "- `make format` formats the source files and symbol addresses for consistency. Please run this before submitting a PR.",
+      "- `make clean` simply deletes the `build` and `nonmatchings` directories",
+      "- `make clean-all` will completely reset the project, including dropping any source changes and data files (but not the disk image). Use with caution."
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Rood Reverse"
+      },
+      {
+        "level": 2,
+        "text": "Status"
+      },
+      {
+        "level": 3,
+        "text": "Core libraries"
+      },
+      {
+        "level": 3,
+        "text": "Main game engine"
+      },
+      {
+        "level": 3,
+        "text": "Menus"
+      },
+      {
+        "level": 3,
+        "text": "Title and Ending Sequence"
+      },
+      {
+        "level": 3,
+        "text": "Editable content"
+      },
+      {
+        "level": 2,
+        "text": "(Naive) Quickstart"
+      },
+      {
+        "level": 2,
+        "text": "Setup"
+      },
+      {
+        "level": 2,
+        "text": "Build targets"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "level": 1,
+        "text": "Rood Reverse"
+      },
+      {
+        "type": "paragraph",
+        "text": "A decompilation project for Vagrant Story for PlayStation 1, with a goal of enabling interoperability with modern hardware and fixing bugs in the original game."
+      },
+      {
+        "type": "paragraph",
+        "text": "This project does not contain any of the original files from the game disk, you must own a copy of the game."
+      },
+      {
+        "type": "paragraph",
+        "text": "Many thanks to the [Chrono Cross Decompilation](https://github.com/jdperos/chrono-cross-decomp) for much of the sound library code."
+      },
+      {
+        "type": "paragraph",
+        "text": "Heavily inspired by and indebted to the incredible work of the [sotn-decomp](https://github.com/Xeeynamo/sotn-decomp) team and the [PS1/PS2 decompilation](https://discord.gg/hKx3FJJgrV) Discord server."
+      },
+      {
+        "type": "paragraph",
+        "text": "Grateful to the authors of Data Crystal’s [Vagrant Story](https://datacrystal.tcrf.net/wiki/Vagrant_Story) page for their excellent work and insights."
+      },
+      {
+        "type": "paragraph",
+        "text": "Thanks also to the following amazing projects (and their dependencies):"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "[splat](https://github.com/ethteck/splat)",
+          "[maspsx](https://github.com/mkst/maspsx)",
+          "[decomp.me](https://github.com/decompme/decomp.me)",
+          "[Decomp permuter](https://github.com/simonlindholm/decomp-permuter)",
+          "[Old GCC](https://github.com/decompals/old-gcc)",
+          "[mkpsxiso](https://github.com/Lameguy64/mkpsxiso)",
+          "[objdiff](https://github.com/encounter/objdiff)",
+          "[decomp.dev](https://decomp.dev/)"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Status"
+      },
+      {
+        "type": "paragraph",
+        "text": "![Overall progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&label=Overall+progress)"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Core libraries"
+      },
+      {
+        "type": "paragraph",
+        "text": "![SLUS_010.40 progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=lib.SLUS_010.40)"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Main game engine"
+      },
+      {
+        "type": "paragraph",
+        "text": "![BATTLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.BATTLE.PRG)\n![INITBTL.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.INITBTL.PRG&color=%2332a934)"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Menus"
+      },
+      {
+        "type": "paragraph",
+        "text": "![Total menu progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus)"
+      },
+      {
+        "type": "paragraph",
+        "text": "![MAINMENU.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MAINMENU.PRG&color=%2332a934)\n![MENU0.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU0.PRG&color=%2332a934)\n![MENU1.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU1.PRG&color=%2332a934)\n![MENU2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU2.PRG&color=%2332a934)\n![MENU3.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU3.PRG&color=%2332a934)\n![MENU4.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU4.PRG&color=%2332a934)\n![MENU5.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU5.PRG&color=%2332a934)\n![MENU7.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU7.PRG&color=%2332a934)\n![MENU8.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU8.PRG&color=%2332a934)\n![MENU9.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU9.PRG)\n![MENUB.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUB.PRG&color=%2332a934)\n![MENUC.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUC.PRG&color=%2332a934)\n![MENUD.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUD.PRG&color=%2332a934)\n![MENUE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUE.PRG&color=%2332a934)\n![MENUF.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUF.PRG)"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Title and Ending Sequence"
+      },
+      {
+        "type": "paragraph",
+        "text": "![TITLE.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=title.TITLE.PRG)\n![ENDING.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.ENDING.PRG)\n![SCREFF2.PRG progress](https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.SCREFF2.PRG)"
+      },
+      {
+        "type": "heading",
+        "level": 3,
+        "text": "Editable content"
+      },
+      {
+        "type": "paragraph",
+        "text": "The following files can be freely edited*, either as source code or by editing the dumped .yaml or .obj formats"
+      },
+      {
+        "type": "code_fence",
+        "language": null,
+        "lines": [
+          "data/BATTLE/",
+          "    INITBTL.PRG",
+          "",
+          "data/MENU/",
+          "    ARMOR.SYD",
+          "    BLADE.SYD",
+          "    SHIELD.SYD",
+          "    ITEMNAME.BIN",
+          "    ITEMHELP.BIN",
+          "    MAPBG.BIN",
+          "    MCMAN.BIN",
+          "    MAINMENU.PRG",
+          "    MENU0.PRG",
+          "    MENU1.PRG",
+          "    MENU2.PRG",
+          "    MENU3.PRG",
+          "    MENU4.PRG",
+          "    MENU5.PRG",
+          "    MENU7.PRG",
+          "    MENU8.PRG",
+          "    MENUB.PRG",
+          "    MENUC.PRG",
+          "    MENUD.PRG",
+          "    MENUE.PRG",
+          "    MENU12.BIN",
+          "    SPMCIMG.BIN",
+          "",
+          "data/SMALL/",
+          "    HELP01.HF0 - HELP14.HF0",
+          "    HELP01.HF1 - HELP14.HF1",
+          "    DUMMY.ARM",
+          "    SCEN001.ARM - SCEN031.ARM",
+          "",
+          "data/TITLE/",
+          "    TITLE.PRG"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "(*n.b. until all of the loading code has been decompiled, if a file's sector size changes on disk then bad things will ensue)"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "(Naive) Quickstart"
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          "Fork the project",
+          "Install system dependencies and copy disk image (see \"Setup\" below)",
+          "Run `make -j` to perform an initial split & build",
+          "Pick a function to decompile, use `make decompme` to create a scratch on decomp.me",
+          "Claim and decompile the scratch",
+          "Copy the decompiled code where it belongs",
+          "Optionally use `make permute` if needed",
+          "Run `make remake -j`, and finally `make format` if the code compiles successfully",
+          "Open a PR"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Setup"
+      },
+      {
+        "type": "paragraph",
+        "text": "The project is mostly self-configuring but requires a minimal amount of setup."
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Make sure the following packages are installed, older versions may also work but this is not tested. This configuration works as-is on Ubuntu 24.04 on WSL; depending on your distro you may need additional packages."
+        ]
+      },
+      {
+        "type": "table",
+        "rows": [
+          [
+            "Package",
+            "Minimum Version"
+          ],
+          [
+            "-------------------------",
+            "----------------"
+          ],
+          [
+            "clang-format",
+            "18.1.3"
+          ],
+          [
+            "cmake",
+            "3.28.3"
+          ],
+          [
+            "docker-buildx",
+            "29.1.3"
+          ],
+          [
+            "g++",
+            "13.3.0"
+          ],
+          [
+            "gcc-mipsel-linux-gnu",
+            "12.4.0"
+          ],
+          [
+            "make",
+            "4.3"
+          ],
+          [
+            "python3",
+            "3.12.3"
+          ],
+          [
+            "python3-venv",
+            "3.12.3"
+          ],
+          [
+            "rustup",
+            "1.26.0"
+          ]
+        ]
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "If you do not use your own docker configuration, set docker permissions with `sudo usermod -aG docker $USER`, then log out and back in again",
+          "Run `rustup default stable` if you do not already have a local rust environment set up",
+          "Dump your original disk to `disks/SLUS-01040.bin`",
+          "Run `make -j` to finish installation and perform an initial build"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Build targets"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "`make -j` should be all that is needed most of the time. The first execution will configure the remaining dependencies in the `tools` directory and extract the files from the disk; from then on it will perform a minimal rebuild.",
+          "`make decompme TARGET=path/to/nonmatchings/source.s` uploads the target function to a new decomp.me scratch.",
+          "`make permute TARGET=path/to/nonmatchings/source.s` invokes the permuter for the target assembly file.",
+          "`make remake -j` will delete and re-split the targets; this can be necessary if the dependency management has failed to identify everything that needs rebuilding (in which case a bug report is appreciated!), or if the configuration has changed enough to be no longer valid (e.g. orphaned .d files). It's good practice to run this before submitting a pull request to make sure everything still works.",
+          "`make format` formats the source files and symbol addresses for consistency. Please run this before submitting a PR.",
+          "`make clean` simply deletes the `build` and `nonmatchings` directories",
+          "`make clean-all` will completely reset the project, including dropping any source changes and data files (but not the disk image). Use with caution."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Chrono Cross Decompilation",
+        "target": "https://github.com/jdperos/chrono-cross-decomp",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "sotn-decomp",
+        "target": "https://github.com/Xeeynamo/sotn-decomp",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "PS1/PS2 decompilation",
+        "target": "https://discord.gg/hKx3FJJgrV",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "Vagrant Story",
+        "target": "https://datacrystal.tcrf.net/wiki/Vagrant_Story",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "splat",
+        "target": "https://github.com/ethteck/splat",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "maspsx",
+        "target": "https://github.com/mkst/maspsx",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "decomp.me",
+        "target": "https://github.com/decompme/decomp.me",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "Decomp permuter",
+        "target": "https://github.com/simonlindholm/decomp-permuter",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "Old GCC",
+        "target": "https://github.com/decompals/old-gcc",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "mkpsxiso",
+        "target": "https://github.com/Lameguy64/mkpsxiso",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "objdiff",
+        "target": "https://github.com/encounter/objdiff",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "decomp.dev",
+        "target": "https://decomp.dev/",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "Overall progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&label=Overall+progress",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "SLUS_010.40 progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=lib.SLUS_010.40",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "BATTLE.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.BATTLE.PRG",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "INITBTL.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=battle.INITBTL.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "Total menu progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MAINMENU.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MAINMENU.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU0.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU0.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU1.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU1.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU2.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU2.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU3.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU3.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU4.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU4.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU5.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU5.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU7.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU7.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU8.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU8.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENU9.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENU9.PRG",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENUB.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUB.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENUC.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUC.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENUD.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUD.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENUE.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUE.PRG&color=%2332a934",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "MENUF.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=menus.MENUF.PRG",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "TITLE.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=title.TITLE.PRG",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "ENDING.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.ENDING.PRG",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      },
+      {
+        "label": "SCREFF2.PRG progress",
+        "target": "https://decomp.dev/ser-pounce/rood-reverse.svg?mode=shield&category=ending.SCREFF2.PRG",
+        "target_json": null,
+        "anchor": null,
+        "external": true
+      }
+    ]
+  }
+}

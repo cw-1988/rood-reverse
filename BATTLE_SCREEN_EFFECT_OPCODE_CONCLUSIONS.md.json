@@ -1,0 +1,199 @@
+{
+  "content": {
+    "raw_markdown": "# BATTLE Screen Effect Opcode Conclusions\n\nThis note captures the evidence-backed conclusions reflected by the current\nstaged BATTLE screen-effect comment updates in this checkout.\n\nThis pass is documentation-only in `_refs/rood-reverse`: it adds clarifying\ncomments, but does not rename symbols or change behavior.\n\n## Comment-Level Conclusions\n\n- `0xE3` is the shared screen-effect angle tween.\n- `0xE4` is the shared two-component screen-effect scale tween.\n- `0xE6` is the shared signed two-axis screen-effect offset tween.\n\n## Code Alignment\n\n- [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) now says the\n  shared `0xE2`/`0xE3` angle helper splits cleanly between camera roll and the\n  screen-effect angle destination, and that fresh MAP script samples are strong\n  enough to confirm `0xE3` as the screen-effect angle tween.\n- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) now labels the\n  `func_8007DDAC` target as the persistent screen-effect angle scalar, alongside\n  the already documented neutral shared screen-effect state used by the scale\n  and offset paths.\n- The same file now documents `func_8007DDB8` as the shared script/menu setter\n  for the two scale components.\n- The same file now documents `func_8007DDF8` as the shared script/menu setter\n  for the signed offset vector.\n\n## Evidence Summary\n\n- The matched dispatch path in\n  [`src/BATTLE/INITBTL.PRG/12AC.c`](src/BATTLE/INITBTL.PRG/12AC.c) places `E3`,\n  `E4`, and `E6` inside the shared screen-effect helper family.\n- The matched angle helper in\n  [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) separates\n  `E2` and `E3` by destination and applies the `E3` result through\n  `func_8007DDAC`.\n- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) shows\n  `func_8007DDAC` writing one persistent shared scalar, just as\n  `func_8007DDB8` and `func_8007DDF8` write the persistent scale and offset\n  state.\n- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) provides the\n  concrete shared state touched by those setter paths: a persistent angle\n  scalar for `E3`, neutral `0x1000`, `0x1000` scale values for `E4`, and a\n  signed offset vector for `E6`.\n- Fresh local script decoding adds the script-side confirmation for `E3`: the\n  current MAP corpus only uses it inside effect setup clusters, and `MAP102`\n  stages angle `48` before tweening back to `0` over 50 ticks.\n\n## Scope Guard\n\nThis note is intentionally narrower than a full opcode writeup. It only records\nthe conclusions that the local code comments now assert with evidence in hand.\nThe rest of the E-range helper family should stay conservative until its setup\nor consumer paths are equally clear.\n",
+    "markdown_with_json_links": "# BATTLE Screen Effect Opcode Conclusions\n\nThis note captures the evidence-backed conclusions reflected by the current\nstaged BATTLE screen-effect comment updates in this checkout.\n\nThis pass is documentation-only in `_refs/rood-reverse`: it adds clarifying\ncomments, but does not rename symbols or change behavior.\n\n## Comment-Level Conclusions\n\n- `0xE3` is the shared screen-effect angle tween.\n- `0xE4` is the shared two-component screen-effect scale tween.\n- `0xE6` is the shared signed two-axis screen-effect offset tween.\n\n## Code Alignment\n\n- [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) now says the\n  shared `0xE2`/`0xE3` angle helper splits cleanly between camera roll and the\n  screen-effect angle destination, and that fresh MAP script samples are strong\n  enough to confirm `0xE3` as the screen-effect angle tween.\n- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) now labels the\n  `func_8007DDAC` target as the persistent screen-effect angle scalar, alongside\n  the already documented neutral shared screen-effect state used by the scale\n  and offset paths.\n- The same file now documents `func_8007DDB8` as the shared script/menu setter\n  for the two scale components.\n- The same file now documents `func_8007DDF8` as the shared script/menu setter\n  for the signed offset vector.\n\n## Evidence Summary\n\n- The matched dispatch path in\n  [`src/BATTLE/INITBTL.PRG/12AC.c`](src/BATTLE/INITBTL.PRG/12AC.c) places `E3`,\n  `E4`, and `E6` inside the shared screen-effect helper family.\n- The matched angle helper in\n  [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) separates\n  `E2` and `E3` by destination and applies the `E3` result through\n  `func_8007DDAC`.\n- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) shows\n  `func_8007DDAC` writing one persistent shared scalar, just as\n  `func_8007DDB8` and `func_8007DDF8` write the persistent scale and offset\n  state.\n- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) provides the\n  concrete shared state touched by those setter paths: a persistent angle\n  scalar for `E3`, neutral `0x1000`, `0x1000` scale values for `E4`, and a\n  signed offset vector for `E6`.\n- Fresh local script decoding adds the script-side confirmation for `E3`: the\n  current MAP corpus only uses it inside effect setup clusters, and `MAP102`\n  stages angle `48` before tweening back to `0` over 50 ticks.\n\n## Scope Guard\n\nThis note is intentionally narrower than a full opcode writeup. It only records\nthe conclusions that the local code comments now assert with evidence in hand.\nThe rest of the E-range helper family should stay conservative until its setup\nor consumer paths are equally clear.\n",
+    "lines": [
+      "# BATTLE Screen Effect Opcode Conclusions",
+      "",
+      "This note captures the evidence-backed conclusions reflected by the current",
+      "staged BATTLE screen-effect comment updates in this checkout.",
+      "",
+      "This pass is documentation-only in `_refs/rood-reverse`: it adds clarifying",
+      "comments, but does not rename symbols or change behavior.",
+      "",
+      "## Comment-Level Conclusions",
+      "",
+      "- `0xE3` is the shared screen-effect angle tween.",
+      "- `0xE4` is the shared two-component screen-effect scale tween.",
+      "- `0xE6` is the shared signed two-axis screen-effect offset tween.",
+      "",
+      "## Code Alignment",
+      "",
+      "- [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) now says the",
+      "  shared `0xE2`/`0xE3` angle helper splits cleanly between camera roll and the",
+      "  screen-effect angle destination, and that fresh MAP script samples are strong",
+      "  enough to confirm `0xE3` as the screen-effect angle tween.",
+      "- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) now labels the",
+      "  `func_8007DDAC` target as the persistent screen-effect angle scalar, alongside",
+      "  the already documented neutral shared screen-effect state used by the scale",
+      "  and offset paths.",
+      "- The same file now documents `func_8007DDB8` as the shared script/menu setter",
+      "  for the two scale components.",
+      "- The same file now documents `func_8007DDF8` as the shared script/menu setter",
+      "  for the signed offset vector.",
+      "",
+      "## Evidence Summary",
+      "",
+      "- The matched dispatch path in",
+      "  [`src/BATTLE/INITBTL.PRG/12AC.c`](src/BATTLE/INITBTL.PRG/12AC.c) places `E3`,",
+      "  `E4`, and `E6` inside the shared screen-effect helper family.",
+      "- The matched angle helper in",
+      "  [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) separates",
+      "  `E2` and `E3` by destination and applies the `E3` result through",
+      "  `func_8007DDAC`.",
+      "- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) shows",
+      "  `func_8007DDAC` writing one persistent shared scalar, just as",
+      "  `func_8007DDB8` and `func_8007DDF8` write the persistent scale and offset",
+      "  state.",
+      "- [`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) provides the",
+      "  concrete shared state touched by those setter paths: a persistent angle",
+      "  scalar for `E3`, neutral `0x1000`, `0x1000` scale values for `E4`, and a",
+      "  signed offset vector for `E6`.",
+      "- Fresh local script decoding adds the script-side confirmation for `E3`: the",
+      "  current MAP corpus only uses it inside effect setup clusters, and `MAP102`",
+      "  stages angle `48` before tweening back to `0` over 50 ticks.",
+      "",
+      "## Scope Guard",
+      "",
+      "This note is intentionally narrower than a full opcode writeup. It only records",
+      "the conclusions that the local code comments now assert with evidence in hand.",
+      "The rest of the E-range helper family should stay conservative until its setup",
+      "or consumer paths are equally clear."
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "BATTLE Screen Effect Opcode Conclusions"
+      },
+      {
+        "level": 2,
+        "text": "Comment-Level Conclusions"
+      },
+      {
+        "level": 2,
+        "text": "Code Alignment"
+      },
+      {
+        "level": 2,
+        "text": "Evidence Summary"
+      },
+      {
+        "level": 2,
+        "text": "Scope Guard"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "level": 1,
+        "text": "BATTLE Screen Effect Opcode Conclusions"
+      },
+      {
+        "type": "paragraph",
+        "text": "This note captures the evidence-backed conclusions reflected by the current\nstaged BATTLE screen-effect comment updates in this checkout."
+      },
+      {
+        "type": "paragraph",
+        "text": "This pass is documentation-only in `_refs/rood-reverse`: it adds clarifying\ncomments, but does not rename symbols or change behavior."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Comment-Level Conclusions"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "`0xE3` is the shared screen-effect angle tween.",
+          "`0xE4` is the shared two-component screen-effect scale tween.",
+          "`0xE6` is the shared signed two-axis screen-effect offset tween."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Code Alignment"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "[`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) now says the shared `0xE2`/`0xE3` angle helper splits cleanly between camera roll and the screen-effect angle destination, and that fresh MAP script samples are strong enough to confirm `0xE3` as the screen-effect angle tween.",
+          "[`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) now labels the `func_8007DDAC` target as the persistent screen-effect angle scalar, alongside the already documented neutral shared screen-effect state used by the scale and offset paths.",
+          "The same file now documents `func_8007DDB8` as the shared script/menu setter for the two scale components.",
+          "The same file now documents `func_8007DDF8` as the shared script/menu setter for the signed offset vector."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Evidence Summary"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "The matched dispatch path in [`src/BATTLE/INITBTL.PRG/12AC.c`](src/BATTLE/INITBTL.PRG/12AC.c) places `E3`, `E4`, and `E6` inside the shared screen-effect helper family.",
+          "The matched angle helper in [`src/BATTLE/BATTLE.PRG/4A0A8.c`](src/BATTLE/BATTLE.PRG/4A0A8.c) separates `E2` and `E3` by destination and applies the `E3` result through `func_8007DDAC`.",
+          "[`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) shows `func_8007DDAC` writing one persistent shared scalar, just as `func_8007DDB8` and `func_8007DDF8` write the persistent scale and offset state.",
+          "[`src/BATTLE/BATTLE.PRG/146C.c`](src/BATTLE/BATTLE.PRG/146C.c) provides the concrete shared state touched by those setter paths: a persistent angle scalar for `E3`, neutral `0x1000`, `0x1000` scale values for `E4`, and a signed offset vector for `E6`.",
+          "Fresh local script decoding adds the script-side confirmation for `E3`: the current MAP corpus only uses it inside effect setup clusters, and `MAP102` stages angle `48` before tweening back to `0` over 50 ticks."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Scope Guard"
+      },
+      {
+        "type": "paragraph",
+        "text": "This note is intentionally narrower than a full opcode writeup. It only records\nthe conclusions that the local code comments now assert with evidence in hand.\nThe rest of the E-range helper family should stay conservative until its setup\nor consumer paths are equally clear."
+      }
+    ],
+    "links": [
+      {
+        "label": "`src/BATTLE/BATTLE.PRG/4A0A8.c`",
+        "target": "src/BATTLE/BATTLE.PRG/4A0A8.c",
+        "target_json": null,
+        "anchor": null,
+        "external": false
+      },
+      {
+        "label": "`src/BATTLE/BATTLE.PRG/146C.c`",
+        "target": "src/BATTLE/BATTLE.PRG/146C.c",
+        "target_json": null,
+        "anchor": null,
+        "external": false
+      },
+      {
+        "label": "`src/BATTLE/INITBTL.PRG/12AC.c`",
+        "target": "src/BATTLE/INITBTL.PRG/12AC.c",
+        "target_json": null,
+        "anchor": null,
+        "external": false
+      },
+      {
+        "label": "`src/BATTLE/BATTLE.PRG/4A0A8.c`",
+        "target": "src/BATTLE/BATTLE.PRG/4A0A8.c",
+        "target_json": null,
+        "anchor": null,
+        "external": false
+      },
+      {
+        "label": "`src/BATTLE/BATTLE.PRG/146C.c`",
+        "target": "src/BATTLE/BATTLE.PRG/146C.c",
+        "target_json": null,
+        "anchor": null,
+        "external": false
+      },
+      {
+        "label": "`src/BATTLE/BATTLE.PRG/146C.c`",
+        "target": "src/BATTLE/BATTLE.PRG/146C.c",
+        "target_json": null,
+        "anchor": null,
+        "external": false
+      }
+    ]
+  }
+}
